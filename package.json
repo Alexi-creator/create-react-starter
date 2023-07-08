@@ -1,11 +1,12 @@
 {
   "name": "created-react-starter",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "",
   "main": "index.js",
   "bin": {
     "starter": "index.js"
   },
+  "type": "module",
   "scripts": {
     "start": "webpack serve --config webpack/webpack.config.js --env env=dev",
     "build": "webpack --config webpack/webpack.config.js --env env=prod",
