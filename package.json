@@ -1,12 +1,11 @@
 {
   "name": "created-react-starter",
-  "version": "0.0.5",
-  "description": "",
+  "version": "1.0.0",
+  "description": "created-react-starter telegram: @ILYA_PAVLOV90",
   "main": "index.js",
   "bin": {
-    "starter": "index.js"
+    "created-react-starter": "./bin/start.js"
   },
-  "type": "module",
   "scripts": {
     "start": "webpack serve --config webpack/webpack.config.js --env env=dev",
     "build": "webpack --config webpack/webpack.config.js --env env=prod",
@@ -17,8 +16,8 @@
   "repository": {
     "type": "git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["react", "CRA", "starter", "created-react-starter"],
+  "author": "Ilia Pavlov",
   "license": "ISC",
   "dependencies": {
     "classnames": "^2.3.1",
