@@ -71,23 +71,23 @@ exec(`mkdir ${targetDirectory} && cd ${targetDirectory}`, (initErr) => {
   console.log('wait... packages are being installed')
 
   // set up packages and start app
-  // exec(`cd ${process.argv[2]} && git init && yarn && yarn start && exit 0`,
-  //   (initErr) => {
-  //     if (initErr) {
-  //       console.error(initErr);
-  //       return;
-  //     }
-  //   }
-  // )
+  exec(
+    `cd ${process.argv[2]} && git init && yarn && yarn start && exit 0`,
+    (initErr) => {
+      if (initErr) {
+        console.error(initErr)
+        return
+      }
+    }
+  )
 
-  // exec(`npx clear-npx-cache`,
-  //   (initErr) => {
-  //     if (initErr) {
-  //       console.error(initErr);
-  //       return;
-  //     }
+  // remove npx-cache for the updated version to work
+  exec(`npx clear-npx-cache`, (initErr) => {
+    if (initErr) {
+      console.error(initErr)
+      return
+    }
 
-  //     console.log('created-react-starter ready! 😀🚀🚀🚀');
-  //   }
-  // )
+    console.log('created-react-starter ready! 😀🚀🚀🚀')
+  })
 })
