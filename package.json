@@ -1,7 +1,7 @@
 {
   "name": "created-react-starter",
-  "version": "1.0.0",
-  "description": "created-react-starter telegram: @ILYA_PAVLOV90",
+  "version": "1.0.8",
+  "description": "created-react-starter, my telegram: @ILYA_PAVLOV90",
   "main": "index.js",
   "bin": {
     "created-react-starter": "./bin/start.js"
