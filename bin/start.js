@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const { exec } = require('child_process')
+const { exec, execSync } = require('child_process')
 
 const {
   directoriesNotBeCopied,
@@ -14,15 +14,15 @@ const { copyDirectory } = require('./utils/copyDirectory.js')
 const sourceDirectory = path.join(__dirname, `..${path.sep}`)
 const targetDirectory = process.argv[2] || 'reactApp'
 
-exec(`mkdir ${targetDirectory} && cd ${targetDirectory}`, (initErr) => {
-  if (initErr) {
+exec(`mkdir ${targetDirectory} && cd ${targetDirectory}`, (error) => {
+  if (error) {
     console.error(
-      `${process.argv[2]} -> this directory already exists, indicate another!`
+      `${targetDirectory} -> this directory already exists, indicate another!`
     )
     return
   }
 
-  // copy files
+  // copy src
   copyDirectory(
     sourceDirectory,
     targetDirectory,
@@ -68,26 +68,43 @@ exec(`mkdir ${targetDirectory} && cd ${targetDirectory}`, (initErr) => {
     'utf-8'
   )
 
+  // copy files
+  fs.copyFileSync(
+    path.join(
+      `${sourceDirectory}`,
+      `${path.sep}`,
+      'bin',
+      `${path.sep}`,
+      'files',
+      `${path.sep}`,
+      'README.md'
+    ),
+    path.join(`${sourceDirectory}`, `${path.sep}`, 'README.md')
+  )
+
   console.log('wait... packages are being installed')
 
   // set up packages and start app
-  exec(
-    `cd ${process.argv[2]} && git init && yarn && yarn start && exit 0`,
-    (initErr) => {
-      if (initErr) {
-        console.error(initErr)
+  execSync(
+    // `cd ${targetDirectory} && git init && yarn && yarn start && exit 0`,
+    `cd ${targetDirectory} && git init && yarn`,
+    (error) => {
+      if (error) {
+        console.error(error)
         return
       }
     }
   )
 
+  console.log()
+  console.log('created-react-starter ready! 😀🚀🚀🚀')
+  console.log(`next step "cd ${targetDirectory} and yarn start"`)
+
   // remove npx-cache for the updated version to work
-  exec(`npx clear-npx-cache`, (initErr) => {
-    if (initErr) {
-      console.error(initErr)
+  exec(`npx clear-npx-cache`, (error) => {
+    if (error) {
+      console.error(error)
       return
     }
-
-    console.log('created-react-starter ready! 😀🚀🚀🚀')
   })
 })
