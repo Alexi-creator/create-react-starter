@@ -11,34 +11,31 @@ const {
 } = require('./constants/index.js')
 const { copyDirectory } = require('./utils/copyDirectory.js')
 
-const sourceDirectory = path.join(__dirname, `..${path.sep}`)
-const targetDirectory = process.argv[2] || 'reactApp'
+const directoryName = process.argv[2] || 'reactApp'
 
-exec(`mkdir ${targetDirectory} && cd ${targetDirectory}`, (error) => {
-  if (error) {
-    console.error(
-      `${targetDirectory} -> this directory already exists, indicate another!`
-    )
-    return
-  }
+const sourceDirectory = path.join(__dirname, '../')
+const targetDirectory = `${process.env.PWD}/${directoryName}`
 
-  // copy src
-  copyDirectory(
-    sourceDirectory,
-    targetDirectory,
-    directoriesNotBeCopied,
-    filesNotBeCopied
+fs.mkdirSync(targetDirectory, (err) => {
+  if (err) throw err
+})
+
+// copy src
+copyDirectory(
+  sourceDirectory,
+  targetDirectory,
+  directoriesNotBeCopied,
+  filesNotBeCopied
+)
+
+// edit package.json
+try {
+  const dataPackageJson = fs.readFileSync(
+    path.join(targetDirectory, 'package.json'),
+    'utf-8'
   )
-
-  // edit package.json
-  try {
-    const dataPackageJson = fs.readFileSync(
-      path.join(targetDirectory, 'package.json'),
-      'utf-8'
-    )
-    const editedPackageJson = Object.entries(
-      JSON.parse(dataPackageJson)
-    ).reduce((acc, [key, value]) => {
+  const editedPackageJson = Object.entries(JSON.parse(dataPackageJson)).reduce(
+    (acc, [key, value]) => {
       if (key === 'bin') return acc
 
       if (emptySettingsJson.includes(key)) {
@@ -48,63 +45,52 @@ exec(`mkdir ${targetDirectory} && cd ${targetDirectory}`, (error) => {
 
       acc[key] = value
       return acc
-    }, {})
+    },
+    {}
+  )
 
-    fs.writeFileSync(
-      path.join(targetDirectory, 'package.json'),
-      JSON.stringify(editedPackageJson, null, 2),
-      'utf-8'
-    )
-  } catch (error) {
-    console.error('Error to read packageJson', error)
-  }
-
-  // create .gitignore since the original file is not copied
   fs.writeFileSync(
-    path.join(`${targetDirectory}`, `${path.sep}`, '.gitignore'),
-    `node_modules
-    \nbuild
-    \nyarn-error.log`,
+    path.join(targetDirectory, 'package.json'),
+    JSON.stringify(editedPackageJson, null, 2),
     'utf-8'
   )
+} catch (error) {
+  console.error('Error to read packageJson', error)
+}
 
-  // copy files
-  fs.copyFileSync(
-    path.join(
-      `${sourceDirectory}`,
-      `${path.sep}`,
-      'bin',
-      `${path.sep}`,
-      'files',
-      `${path.sep}`,
-      'README.md'
-    ),
-    path.join(`${sourceDirectory}`, `${path.sep}`, 'README.md')
-  )
+// create .gitignore since the original file is not copied
+fs.writeFileSync(
+  path.join(`${targetDirectory}`, '/', '.gitignore'),
+  `node_modules
+build
+yarn-error.log`,
+  'utf-8'
+)
 
-  console.log('wait... packages are being installed')
+// copy files
+fs.copyFileSync(
+  path.join(`${sourceDirectory}`, '/', 'bin', '/', 'files', '/', 'README.md'),
+  path.join(`${targetDirectory}`, '/', 'README.md')
+)
 
-  // set up packages and start app
-  execSync(
-    // `cd ${targetDirectory} && git init && yarn && yarn start && exit 0`,
-    `cd ${targetDirectory} && git init && yarn`,
-    (error) => {
-      if (error) {
-        console.error(error)
-        return
-      }
-    }
-  )
+console.log('wait... packages are being installed')
 
-  console.log()
-  console.log('created-react-starter ready! 😀🚀🚀🚀')
-  console.log(`next step "cd ${targetDirectory} and yarn start"`)
+// set up packages
+execSync(`cd ${targetDirectory} && git init && yarn && exit 0`, (error) => {
+  if (error) {
+    console.error(error)
+    return
+  }
+})
 
-  // remove npx-cache for the updated version to work
-  exec(`npx clear-npx-cache`, (error) => {
-    if (error) {
-      console.error(error)
-      return
-    }
-  })
+console.log()
+console.log('created-react-starter ready! 😀🚀🚀🚀')
+console.log(`next step: "cd ${directoryName} and yarn start"`)
+
+// remove npx-cache for the updated version to work
+exec(`npx clear-npx-cache`, (error) => {
+  if (error) {
+    console.error(error)
+    return
+  }
 })
