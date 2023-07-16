@@ -21,7 +21,7 @@ const __dirname = dirname(__filename)
 
 const directoryName = process.argv[2] || 'reactApp'
 const sourceDirectory = join(__dirname, '../')
-const targetDirectory = `${process.env.PWD}/${directoryName}`
+const targetDirectory = join(process.env.INIT_CWD, '/', directoryName)
 
 const app = async () => {
   await promises.mkdir(targetDirectory)
@@ -90,19 +90,18 @@ yarn-error.log`,
   // set up packages
   try {
     console.log(chalk.cyan('wait... packages are being installed:'))
-    execSync(`cd ${targetDirectory} && git init && yarn && exit 0`, {
+    execSync(`cd ${directoryName} && git init && yarn && exit 0`, {
       stdio: 'inherit',
     })
+    console.log()
+    console.log(chalk.cyan('created-react-starter ready! 😀🚀🚀🚀'))
+    console.log(chalk.cyan(`next step: "cd ${directoryName} and yarn start"`))
   } catch (error) {
     console.error('Packages not installed:', error)
   }
 
-  console.log()
-  console.log(chalk.cyan('created-react-starter ready! 😀🚀🚀🚀'))
-  console.log(chalk.cyan(`next step: "cd ${directoryName} and yarn start"`))
-
   // remove npx-cache for the updated version to work
-  exec(`npx clear-npx-cache`, (error) => {
+  exec('npx clear-npx-cache', (error) => {
     if (error) {
       console.error(error)
       return
