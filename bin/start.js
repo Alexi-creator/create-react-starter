@@ -87,19 +87,19 @@ yarn-error.log`,
     join(`${targetDirectory}`, '/', 'README.md')
   )
 
-  console.log(chalk.cyan('wait... packages are being installed'))
-
   // set up packages
-  execSync(`cd ${targetDirectory} && git init && yarn && exit 0`, (error) => {
-    if (error) {
-      console.error(error)
-      return
-    }
-  })
+  try {
+    console.log(chalk.cyan('wait... packages are being installed:'))
+    execSync(`cd ${targetDirectory} && git init && yarn && exit 0`, {
+      stdio: 'inherit',
+    })
+  } catch (error) {
+    console.error('Packages not installed:', error)
+  }
 
   console.log()
   console.log(chalk.cyan('created-react-starter ready! 😀🚀🚀🚀'))
-  console.log(chalk.cyan(`step: "cd ${directoryName} and yarn start"`))
+  console.log(chalk.cyan(`next step: "cd ${directoryName} and yarn start"`))
 
   // remove npx-cache for the updated version to work
   exec(`npx clear-npx-cache`, (error) => {
