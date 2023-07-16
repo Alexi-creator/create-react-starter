@@ -1,12 +1,12 @@
-const fs = require('fs')
-const path = require('path')
+import * as fs from 'fs'
+import { join } from 'path'
 
-function copyDirectory(
+export const copyDirectory = (
   sourceDir,
   targetDir,
   directoriesNotBeCopied = [],
   filesNotBeCopied = []
-) {
+) => {
   // create directory
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir)
@@ -17,8 +17,8 @@ function copyDirectory(
 
   // copy files and directories
   files.forEach((file) => {
-    const sourcePath = path.join(sourceDir, file)
-    const targetPath = path.join(targetDir, file)
+    const sourcePath = join(sourceDir, file)
+    const targetPath = join(targetDir, file)
 
     if (fs.statSync(sourcePath).isDirectory()) {
       // don't copy some directories
@@ -31,5 +31,3 @@ function copyDirectory(
     }
   })
 }
-
-module.exports = { copyDirectory }

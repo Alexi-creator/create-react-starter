@@ -1,11 +1,12 @@
 {
   "name": "created-react-starter",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "created-react-starter, my telegram: @ILYA_PAVLOV90",
   "main": "index.js",
   "bin": {
     "created-react-starter": "./bin/start.js"
   },
+  "type": "module",
   "scripts": {
     "start": "webpack serve --config webpack/webpack.config.js --env env=dev",
     "build": "webpack --config webpack/webpack.config.js --env env=prod",
@@ -13,13 +14,21 @@
     "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "homepage": "git",
   "repository": {
-    "type": "git"
+    "type": "git",
+    "url": ""
   },
-  "keywords": ["react", "CRA", "starter", "created-react-starter"],
+  "keywords": [
+    "react",
+    "CRA",
+    "starter",
+    "created-react-starter"
+  ],
   "author": "Ilia Pavlov",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^5.3.0",
     "classnames": "^2.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

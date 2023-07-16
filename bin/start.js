@@ -1,42 +1,58 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
-const path = require('path')
-const { exec, execSync } = require('child_process')
+import { promises } from 'fs'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { exec, execSync } from 'child_process'
 
-const {
+import chalk from 'chalk'
+
+import {
   directoriesNotBeCopied,
   filesNotBeCopied,
   emptySettingsJson,
-} = require('./constants/index.js')
-const { copyDirectory } = require('./utils/copyDirectory.js')
+  removeKeyJson,
+  removePackageJson,
+} from './constants/index.js'
+import { copyDirectory } from './utils/copyDirectory.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const directoryName = process.argv[2] || 'reactApp'
-
-const sourceDirectory = path.join(__dirname, '../')
+const sourceDirectory = join(__dirname, '../')
 const targetDirectory = `${process.env.PWD}/${directoryName}`
 
-fs.mkdirSync(targetDirectory, (err) => {
-  if (err) throw err
-})
+const app = async () => {
+  await promises.mkdir(targetDirectory)
 
-// copy src
-copyDirectory(
-  sourceDirectory,
-  targetDirectory,
-  directoriesNotBeCopied,
-  filesNotBeCopied
-)
-
-// edit package.json
-try {
-  const dataPackageJson = fs.readFileSync(
-    path.join(targetDirectory, 'package.json'),
-    'utf-8'
+  // copy src
+  copyDirectory(
+    sourceDirectory,
+    targetDirectory,
+    directoriesNotBeCopied,
+    filesNotBeCopied
   )
-  const editedPackageJson = Object.entries(JSON.parse(dataPackageJson)).reduce(
-    (acc, [key, value]) => {
-      if (key === 'bin') return acc
+
+  // edit package.json
+  try {
+    const dataPackageJson = await promises.readFile(
+      join(targetDirectory, 'package.json'),
+      'utf-8'
+    )
+    const editedPackageJson = Object.entries(
+      JSON.parse(dataPackageJson)
+    ).reduce((acc, [key, value]) => {
+      if (removeKeyJson.includes(key)) return acc
+
+      if (key === 'dependencies') {
+        const dependencies = Object.entries(value).filter(
+          ([packageItem]) => !removePackageJson.includes(packageItem)
+        )
+        acc[key] = Object.fromEntries(dependencies)
+
+        return acc
+      }
 
       if (emptySettingsJson.includes(key)) {
         acc[key] = ''
@@ -45,52 +61,53 @@ try {
 
       acc[key] = value
       return acc
-    },
-    {}
-  )
+    }, {})
 
-  fs.writeFileSync(
-    path.join(targetDirectory, 'package.json'),
-    JSON.stringify(editedPackageJson, null, 2),
-    'utf-8'
-  )
-} catch (error) {
-  console.error('Error to read packageJson', error)
-}
+    await promises.writeFile(
+      join(targetDirectory, 'package.json'),
+      JSON.stringify(editedPackageJson, null, 2),
+      'utf-8'
+    )
+  } catch (error) {
+    console.error('Error to read packageJson', error)
+  }
 
-// create .gitignore since the original file is not copied
-fs.writeFileSync(
-  path.join(`${targetDirectory}`, '/', '.gitignore'),
-  `node_modules
+  // create .gitignore since the original file is not copied
+  await promises.writeFile(
+    join(`${targetDirectory}`, '/', '.gitignore'),
+    `node_modules
 build
 yarn-error.log`,
-  'utf-8'
-)
+    'utf-8'
+  )
 
-// copy files
-fs.copyFileSync(
-  path.join(`${sourceDirectory}`, '/', 'bin', '/', 'files', '/', 'README.md'),
-  path.join(`${targetDirectory}`, '/', 'README.md')
-)
+  // copy files
+  await promises.copyFile(
+    join(`${sourceDirectory}`, '/', 'bin', '/', 'files', '/', 'README.md'),
+    join(`${targetDirectory}`, '/', 'README.md')
+  )
 
-console.log('wait... packages are being installed')
+  console.log(chalk.cyan('wait... packages are being installed'))
 
-// set up packages
-execSync(`cd ${targetDirectory} && git init && yarn && exit 0`, (error) => {
-  if (error) {
-    console.error(error)
-    return
-  }
-})
+  // set up packages
+  execSync(`cd ${targetDirectory} && git init && yarn && exit 0`, (error) => {
+    if (error) {
+      console.error(error)
+      return
+    }
+  })
 
-console.log()
-console.log('created-react-starter ready! 😀🚀🚀🚀')
-console.log(`next step: "cd ${directoryName} and yarn start"`)
+  console.log()
+  console.log(chalk.cyan('created-react-starter ready! 😀🚀🚀🚀'))
+  console.log(chalk.cyan(`step: "cd ${directoryName} and yarn start"`))
 
-// remove npx-cache for the updated version to work
-exec(`npx clear-npx-cache`, (error) => {
-  if (error) {
-    console.error(error)
-    return
-  }
-})
+  // remove npx-cache for the updated version to work
+  exec(`npx clear-npx-cache`, (error) => {
+    if (error) {
+      console.error(error)
+      return
+    }
+  })
+}
+
+app()
