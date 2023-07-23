@@ -2,7 +2,7 @@ export const directoriesNotBeCopied = ['bin', '.git', 'node_modules']
 
 export const filesNotBeCopied = ['.npmignore', 'package-lock.json']
 
-export const removeKeyJson = ['repository', 'bin']
+export const removeKeyJson = ['repository', 'bin', 'type']
 
 export const removePackageJson = ['chalk']
 

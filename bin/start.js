@@ -87,6 +87,14 @@ yarn-error.log`,
     join(`${targetDirectory}`, '/', 'README.md')
   )
 
+  // remove npx-cache for the updated version to work
+  exec('npx clear-npx-cache', (error) => {
+    if (error) {
+      console.error(error)
+      return
+    }
+  })
+
   // set up packages
   try {
     console.log(chalk.cyan('wait... packages are being installed:'))
@@ -99,14 +107,6 @@ yarn-error.log`,
   } catch (error) {
     console.error('Packages not installed:', error)
   }
-
-  // remove npx-cache for the updated version to work
-  exec('npx clear-npx-cache', (error) => {
-    if (error) {
-      console.error(error)
-      return
-    }
-  })
 }
 
 app()
