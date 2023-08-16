@@ -21,7 +21,7 @@ const __dirname = dirname(__filename)
 
 const directoryName = process.argv[2] || 'reactApp'
 const sourceDirectory = join(__dirname, '../')
-const targetDirectory = join(process.env.INIT_CWD, '/', directoryName)
+const targetDirectory = join(process.env.INIT_CWD || process.env.PWD, '/', directoryName)
 
 const app = async () => {
   await promises.mkdir(targetDirectory)
@@ -98,14 +98,14 @@ yarn-error.log`,
   // set up packages
   try {
     console.log(chalk.cyan('wait... packages are being installed:'))
-    execSync(`cd ${directoryName} && git init && yarn && exit 0`, {
+    execSync(`cd ${directoryName} && git init && yarn && git add . && git commit -m "initial commit react-starter" && exit 0`, {
       stdio: 'inherit',
     })
     console.log()
     console.log(chalk.cyan('created-react-starter ready! 😀🚀🚀🚀'))
     console.log(chalk.cyan(`next step: "cd ${directoryName} and yarn start"`))
   } catch (error) {
-    console.error('Packages not installed:', error)
+    console.log(chalk.red('Packages not installed:'), error)
   }
 }
 
