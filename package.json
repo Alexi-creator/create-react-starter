@@ -1,10 +1,10 @@
 {
-  "name": "created-react-starter",
-  "version": "1.0.52",
-  "description": "created-react-starter, my telegram: @ILYA_PAVLOV90",
+  "name": "starter-react-spa",
+  "version": "1.0.54",
+  "description": "starter-react-spa, my telegram: @ILYA_PAVLOV90",
   "main": "index.js",
   "bin": {
-    "created-react-starter": "./bin/start.js"
+    "starter-react-spa": "./bin/start.js"
   },
   "type": "module",
   "scripts": {
@@ -23,7 +23,7 @@
     "react",
     "CRA",
     "starter",
-    "created-react-starter"
+    "starter-react-spa"
   ],
   "author": "Ilia Pavlov",
   "license": "ISC",

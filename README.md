@@ -1,8 +1,8 @@
-# created-react-starter
+# starter-react-spa
 
 ## please don't use powershell
 
-## use command: npx created-react-starter name_folder
-## example: npx created-react-starter name_my_project
+## use command: npx starter-react-spa name_folder
+## example: npx starter-react-spa name_my_project
 
 ## default folder: "reactApp"
