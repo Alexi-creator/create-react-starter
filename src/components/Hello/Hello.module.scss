@@ -1,7 +1,10 @@
 .root {
-  width: 100%;
-  text-align: center;
-  color: cadetblue
+  width: max-content;
+  color: cadetblue;
+  margin: 0 auto;
+  font-size: 4rem;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
 .test {
