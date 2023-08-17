@@ -2,6 +2,14 @@
 // you can also import global styles of loose style libraries here
 // class names will not change
 
+:root[data-theme='light'] {
+
+}
+
+:root[data-theme='dark'] {
+
+}
+
 *,
 *:after,
 *:before {
